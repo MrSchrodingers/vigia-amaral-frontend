@@ -1,0 +1,8 @@
+ignoredBuiltDependencies:
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - core-js
+  - esbuild
+  - puppeteer
+  - sharp
