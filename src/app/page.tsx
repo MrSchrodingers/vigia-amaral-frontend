@@ -2,10 +2,10 @@
 
 import { useState } from "react"
 import { MessagesView } from "../common/components/messages/messages-view"
-import { ProcessSearchView } from "../common/components/process/process-search-view"
 import { ChatView } from "../common/components/chat/chat-view"
 import { Sidebar } from "../common/components/shared/sidebar"
 import { Header } from "../common/components/shared/header"
+import { LegalProcessManager } from "../common/components/process/legal-process-manager"
 
 
 type ViewType = "messages" | "processes" | "chat"
@@ -18,7 +18,7 @@ export default function HomePage() {
       case "messages":
         return <MessagesView />
       case "processes":
-        return <ProcessSearchView />
+        return <LegalProcessManager />
       case "chat":
         return <ChatView />
       default:

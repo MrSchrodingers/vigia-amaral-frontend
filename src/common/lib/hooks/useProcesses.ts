@@ -5,17 +5,17 @@ import api from "@/src/common/services/api.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const fetchProcesses = async (): Promise<LegalProcess[]> => {
-  const { data } = await api.get('/api/processes/');
+  const { data } = await api.get('/processes/');
   return data;
 };
 
 const syncProcess = async (processNumber: string): Promise<LegalProcessDetails> => {
-  const { data } = await api.post(`/api/processes/sync/${processNumber}`);
+  const { data } = await api.post(`/processes/sync/${processNumber}`);
   return data;
 };
 
 const runAIJury = async (processId: string): Promise<ActionResponse<any>> => {
-  const { data } = await api.post(`/api/actions/processes/${processId}/run-ai-jury`);
+  const { data } = await api.post(`/actions/processes/${processId}/run-ai-jury`);
   return data;
 };
 

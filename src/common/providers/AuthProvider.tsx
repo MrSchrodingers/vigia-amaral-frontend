@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedToken) {
       try {
         const decoded: { sub: string } = jwtDecode(storedToken);
-        // Em uma app real, você faria uma chamada a /api/auth/users/me para validar o token e obter dados do usuário
+        // Em uma app real, você faria uma chamada a /auth/users/me para validar o token e obter dados do usuário
         setUser({ email: decoded.sub, id: '', is_active: true }); // Mock user data from token
         setToken(storedToken);
       } catch (error) {
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (data: FormData) => {
-    const response = await api.post('/api/auth/token', data);
+    const response = await api.post('/auth/token', data);
     const { access_token } = response.data;
     localStorage.setItem('accessToken', access_token);
     const decoded: { sub: string } = jwtDecode(access_token);

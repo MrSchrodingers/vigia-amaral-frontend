@@ -1,0 +1,17 @@
+/* [project]/node_modules/.pnpm/geist@1.4.2_next@15.2.2_react-dom@19.0.0_react@19.0.0__react@19.0.0_/node_modules/geist/dist/geistmono_8e2790ea.module.css [app-client] (css) */
+@font-face {
+  font-family: GeistMono;
+  src: url("../media/GeistMono_Variable.p.6bae060c.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 900;
+}
+
+.geistmono_8e2790ea-module__XjHoCq__className {
+  font-family: GeistMono, ui-monospace, SFMono-Regular, Roboto Mono, Menlo, Monaco, Liberation Mono, DejaVu Sans Mono, Courier New, monospace;
+}
+
+.geistmono_8e2790ea-module__XjHoCq__variable {
+  --font-geist-mono: "GeistMono", ui-monospace, SFMono-Regular, Roboto Mono, Menlo, Monaco, Liberation Mono, DejaVu Sans Mono, Courier New, monospace;
+}
+
+/*# sourceMappingURL=464d8_geist_dist_geistmono_8e2790ea_module_b52d8e88.css.map*/

@@ -1,25 +1,24 @@
-"use client";
+"use client"
 
-import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Search, FileText, Download, Brain, Loader2, Gavel, Scale, ShieldAlert
-} from "lucide-react";
+import type React from "react"
 
+import { useState, useMemo } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { Search, FileText, Download, Brain, Loader2, Gavel, Scale, ShieldAlert } from "lucide-react"
 
-import { Input } from "../ui/input";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../ui/card";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { ScrollArea } from "../ui/scroll-area";
-import { Skeleton } from "../ui/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import type { LegalProcess, LegalProcessDetails, ProcessDocument } from "../../interfaces/types";
-import { cn } from "../../utils/utils";
-import api from "../../services/api.service";
-import { formatCurrency, formatDate } from "../shared/utils/shared_utils";
-import { useProcesses } from "../../lib/hooks/useProcesses";
+import { Input } from "../ui/input"
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../ui/card"
+import { Badge } from "../ui/badge"
+import { Button } from "../ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
+import { ScrollArea } from "../ui/scroll-area"
+import { Skeleton } from "../ui/skeleton"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import type { LegalProcess, LegalProcessDetails, ProcessDocument } from "../../interfaces/types"
+import { cn } from "../../utils/utils"
+import api from "../../services/api.service"
+import { formatCurrency, formatDate } from "../shared/utils/shared_utils"
+import { useProcesses } from "../../lib/hooks/useProcesses"
 
 // --- Subcomponentes para Melhor Organização ---
 
@@ -30,23 +29,25 @@ const ProcessList = ({
   processes,
   isLoading,
   onSelectProcess,
-  selectedProcessId
+  selectedProcessId,
 }: {
-  processes: LegalProcess[] | undefined;
-  isLoading: boolean;
-  onSelectProcess: (id: string) => void;
-  selectedProcessId: string | null;
+  processes: LegalProcess[] | undefined
+  isLoading: boolean
+  onSelectProcess: (id: string) => void
+  selectedProcessId: string | null
 }) => {
   if (isLoading) {
     return (
       <div className="p-2 space-y-2">
-        {[...Array(7)].map((_, i) => <Skeleton key={i} className="h-28 w-full" />)}
+        {[...Array(7)].map((_, i) => (
+          <Skeleton key={i} className="h-28 w-full" />
+        ))}
       </div>
-    );
+    )
   }
 
   if (!processes || processes.length === 0) {
-    return <div className="p-4 text-center text-sm text-muted-foreground">Nenhum processo encontrado.</div>;
+    return <div className="p-4 text-center text-sm text-muted-foreground">Nenhum processo encontrado.</div>
   }
 
   return (
@@ -62,43 +63,46 @@ const ProcessList = ({
         >
           <CardContent className="p-4">
             <p className="font-mono text-sm font-medium">{process.process_number}</p>
-            <p className="text-sm font-medium line-clamp-2 mt-1">{process.classe_processual || 'Classe não definida'}</p>
+            <p className="text-sm font-medium line-clamp-2 mt-1">
+              {process.classe_processual || "Classe não definida"}
+            </p>
             <div className="mt-2 pt-2 border-t border-border">
-              <p className="text-sm font-semibold text-primary">
-                {formatCurrency(process.valor_causa ?? 0)}
-              </p>
+              <p className="text-sm font-semibold text-primary">{formatCurrency(process.valor_causa ?? 0)}</p>
             </div>
           </CardContent>
         </Card>
       ))}
     </div>
-  );
-};
+  )
+}
 
 /**
  * Exibe os detalhes completos de um processo selecionado.
  */
-const ProcessDetails = ({ process, onRunAIJury, isAnalyzing }: { process: LegalProcessDetails; onRunAIJury: () => void, isAnalyzing: boolean }) => {
-
+const ProcessDetails = ({
+  process,
+  onRunAIJury,
+  isAnalyzing,
+}: { process: LegalProcessDetails; onRunAIJury: () => void; isAnalyzing: boolean }) => {
   const handleDownload = async (doc: ProcessDocument) => {
     try {
-      const response = await api.get(`/api/processes/${process.id}/documents/${doc.id}/download`, {
-        responseType: 'blob',
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', doc.name);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const response = await api.get(`/processes/${process.id}/documents/${doc.id}/download`, {
+        responseType: "blob",
+      })
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", doc.name)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
     } catch (error) {
-      console.error("Download failed:", error);
+      console.error("Download failed:", error)
       // Aqui você pode usar uma biblioteca de toast para notificar o usuário
     }
-  };
-  
-  const getPartyByType = (polo: 'ATIVO' | 'PASSIVO') => process.parties.find(p => p.polo === polo);
+  }
+
+  const getPartyByType = (polo: "ATIVO" | "PASSIVO") => process.parties.find((p) => p.polo === polo)
 
   return (
     <TooltipProvider>
@@ -110,7 +114,7 @@ const ProcessDetails = ({ process, onRunAIJury, isAnalyzing }: { process: LegalP
             <p className="font-mono text-sm text-muted-foreground">{process.process_number}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Badge>{process.status || 'N/A'}</Badge>
+            <Badge>{process.status || "N/A"}</Badge>
           </div>
         </div>
 
@@ -119,13 +123,13 @@ const ProcessDetails = ({ process, onRunAIJury, isAnalyzing }: { process: LegalP
           <Card>
             <CardContent className="p-3">
               <p className="text-xs text-muted-foreground">Autor</p>
-              <p className="font-medium text-sm truncate">{getPartyByType('ATIVO')?.name || 'N/A'}</p>
+              <p className="font-medium text-sm truncate">{getPartyByType("ATIVO")?.name || "N/A"}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-3">
               <p className="text-xs text-muted-foreground">Réu</p>
-              <p className="font-medium text-sm truncate">{getPartyByType('PASSIVO')?.name || 'N/A'}</p>
+              <p className="font-medium text-sm truncate">{getPartyByType("PASSIVO")?.name || "N/A"}</p>
             </CardContent>
           </Card>
           <Card>
@@ -137,7 +141,7 @@ const ProcessDetails = ({ process, onRunAIJury, isAnalyzing }: { process: LegalP
           <Card>
             <CardContent className="p-3">
               <p className="text-xs text-muted-foreground">Órgão Julgador</p>
-              <p className="font-medium text-sm truncate">{process.orgao_julgador || 'N/A'}</p>
+              <p className="font-medium text-sm truncate">{process.orgao_julgador || "N/A"}</p>
             </CardContent>
           </Card>
         </div>
@@ -193,14 +197,21 @@ const ProcessDetails = ({ process, onRunAIJury, isAnalyzing }: { process: LegalP
                         <div className="overflow-hidden">
                           <p className="font-medium truncate">{doc.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            {doc.document_type} • {doc.file_size ? `${(doc.file_size / 1024).toFixed(1)} KB` : ''} • {formatDate(doc.juntada_date)}
+                            {doc.document_type} • {doc.file_size ? `${(doc.file_size / 1024).toFixed(1)} KB` : ""} •{" "}
+                            {formatDate(doc.juntada_date)}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
                         <Tooltip>
-                            <TooltipTrigger asChild><Button variant="ghost" size="icon" onClick={() => handleDownload(doc)}><Download className="w-4 h-4" /></Button></TooltipTrigger>
-                            <TooltipContent><p>Baixar Documento</p></TooltipContent>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" onClick={() => handleDownload(doc)}>
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Baixar Documento</p>
+                          </TooltipContent>
                         </Tooltip>
                       </div>
                     </CardContent>
@@ -209,16 +220,20 @@ const ProcessDetails = ({ process, onRunAIJury, isAnalyzing }: { process: LegalP
               </div>
             </ScrollArea>
           </TabsContent>
-          
+
           {/* Partes */}
           <TabsContent value="parties" className="flex-1 overflow-hidden">
             <ScrollArea className="h-full px-6 pb-6">
               <div className="space-y-4">
-                {process.parties.map(party => (
+                {process.parties.map((party) => (
                   <Card key={party.id}>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-base">
-                        {party.polo === 'ATIVO' ? <Gavel className="w-5 h-5 text-blue-500" /> : <ShieldAlert className="w-5 h-5 text-red-500" />}
+                        {party.polo === "ATIVO" ? (
+                          <Gavel className="w-5 h-5 text-blue-500" />
+                        ) : (
+                          <ShieldAlert className="w-5 h-5 text-red-500" />
+                        )}
                         {party.polo}
                       </CardTitle>
                       <CardDescription>{party.name}</CardDescription>
@@ -243,73 +258,89 @@ const ProcessDetails = ({ process, onRunAIJury, isAnalyzing }: { process: LegalP
 
           {/* Análise de IA */}
           <TabsContent value="analysis" className="flex-1 overflow-hidden">
-             <ScrollArea className="h-full px-6 pb-6">
-                {process.analysis_content ? (
-                    <Card>
-                       <CardHeader><CardTitle>Análise Estratégica</CardTitle></CardHeader>
-                       <CardContent className="prose dark:prose-invert max-w-none">
-                          <h4>Ação Recomendada</h4>
-                          <p>{process.analysis_content?.acao_recomendada?.proxima_acao}</p>
-                          <h4>Estratégia</h4>
-                          <p>{process.analysis_content?.acao_recomendada?.estrategia}</p>
-                          <h4>Racional Jurídico</h4>
-                          <p>{process.analysis_content?.racional_juridico}</p>
-                       </CardContent>
-                    </Card>
-                ) : (
-                    <div className="text-center py-10">
-                        <p>Nenhuma análise de IA foi executada para este processo ainda.</p>
-                        <Button onClick={onRunAIJury} disabled={isAnalyzing} className="mt-4">
-                           {isAnalyzing ? "Analisando..." : "Executar Análise Agora"}
-                        </Button>
-                    </div>
-                )}
-             </ScrollArea>
+            <ScrollArea className="h-full px-6 pb-6">
+              {process.analysis_content ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Análise Estratégica</CardTitle>
+                  </CardHeader>
+                  <CardContent className="prose dark:prose-invert max-w-none">
+                    <h4>Ação Recomendada</h4>
+                    <p>{process.analysis_content?.acao_recomendada?.proxima_acao}</p>
+                    <h4>Estratégia</h4>
+                    <p>{process.analysis_content?.acao_recomendada?.estrategia}</p>
+                    <h4>Racional Jurídico</h4>
+                    <p>{process.analysis_content?.racional_juridico}</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="text-center py-10">
+                  <p>Nenhuma análise de IA foi executada para este processo ainda.</p>
+                  <Button onClick={onRunAIJury} disabled={isAnalyzing} className="mt-4">
+                    {isAnalyzing ? "Analisando..." : "Executar Análise Agora"}
+                  </Button>
+                </div>
+              )}
+            </ScrollArea>
           </TabsContent>
-
         </Tabs>
       </div>
     </TooltipProvider>
-  );
-};
+  )
+}
 
 export function ProcessSearchView() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedProcessId, setSelectedProcessId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterTerm, setFilterTerm] = useState("") // Estado separado para o filtro da lista
+  const [selectedProcessId, setSelectedProcessId] = useState<string | null>(null)
 
-  const { processes, isLoading: isLoadingList, syncProcess, isSyncing, runAIJury, isAnalyzing } = useProcesses();
+  const { processes, isLoading: isLoadingList, syncProcess, isSyncing, runAIJury, isAnalyzing } = useProcesses()
 
   const { data: selectedProcessDetails, isLoading: isLoadingDetails } = useQuery<LegalProcessDetails>({
-    queryKey: ['process', selectedProcessId],
-    // A função de query agora é apenas para buscar do cache. A sincronização é uma ação (mutation).
+    queryKey: ["process", selectedProcessId],
     queryFn: async () => {
-      const { data } = await api.get(`/api/processes/${selectedProcessId}`);
-      return data;
+      if (!selectedProcessId) return null
+      const { data } = await api.get(`/api/processes/${selectedProcessId}`)
+      return data
     },
     enabled: !!selectedProcessId,
-  });
+  })
 
-  const handleSelectProcess = (processId: string) => {
-    const process = processes?.find(p => p.id === processId);
-    if(process) {
-      setSelectedProcessId(process.id);
-      syncProcess(process.process_number);
+  const handleSelectProcess = (process: LegalProcess) => {
+    if (selectedProcessId !== process.id) {
+      setSelectedProcessId(process.id)
+      // Opcional: pode re-sincronizar ao clicar, se desejar
+      // syncProcess(process.process_number);
     }
-  };
-  
+  }
+
   const handleRunAIJury = () => {
     if (selectedProcessId) {
-        runAIJury(selectedProcessId);
+      runAIJury(selectedProcessId)
     }
-  };
+  }
+
+  const handleSyncNewProcess = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchTerm.trim()) {
+      syncProcess(searchTerm, {
+        onSuccess: (data) => {
+          // Após sincronizar com sucesso, seleciona o novo processo
+          setSelectedProcessId(data.id)
+        },
+      })
+    }
+  }
 
   const filteredProcesses = useMemo(() => {
-    if (!processes) return [];
-    return processes.filter(p =>
-      p.process_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.classe_processual?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [processes, searchTerm]);
+    if (!processes) return []
+    // A lista agora é filtrada por um estado separado 'filterTerm'
+    return processes.filter(
+      (p) =>
+        p.process_number.toLowerCase().includes(filterTerm.toLowerCase()) ||
+        p.classe_processual?.toLowerCase().includes(filterTerm.toLowerCase()),
+    )
+  }, [processes, filterTerm])
 
   return (
     <div className="flex h-full">
@@ -320,12 +351,32 @@ export function ProcessSearchView() {
             <Search className="w-5 h-5 text-primary" />
             <h3 className="font-semibold">Busca de Processos</h3>
           </div>
-          <div className="relative">
+
+          {/* Formulário de Consulta de Novo Processo */}
+          <form onSubmit={handleSyncNewProcess} className="space-y-3">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Digite o Nº do Processo para consultar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button type="submit" disabled={!searchTerm.trim() || isSyncing}>
+                {isSyncing && !selectedProcessId ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+          </form>
+
+          {/* Filtro para a lista local */}
+          <div className="relative mt-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por número do processo..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Filtrar processos existentes..."
+              value={filterTerm}
+              onChange={(e) => setFilterTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -334,7 +385,7 @@ export function ProcessSearchView() {
           <ProcessList
             processes={filteredProcesses}
             isLoading={isLoadingList}
-            onSelectProcess={handleSelectProcess}
+            onSelectProcess={(id) => handleSelectProcess(processes?.find((p) => p.id === id)!)}
             selectedProcessId={selectedProcessId}
           />
         </ScrollArea>
@@ -344,22 +395,26 @@ export function ProcessSearchView() {
       <div className="flex-1 flex flex-col">
         {isSyncing || (selectedProcessId && isLoadingDetails) ? (
           <div className="flex-1 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
+              <p className="mt-2 text-muted-foreground">Sincronizando com Jus.br...</p>
+            </div>
           </div>
         ) : selectedProcessDetails ? (
-          <ProcessDetails process={selectedProcessDetails} onRunAIJury={handleRunAIJury} isAnalyzing={isAnalyzing}/>
+          <ProcessDetails process={selectedProcessDetails} onRunAIJury={handleRunAIJury} isAnalyzing={isAnalyzing} />
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <Scale className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">Busque ou Selecione um Processo</h3>
               <p className="text-muted-foreground max-w-sm">
-                Use a busca para encontrar um processo ou selecione um da lista para sincronizar os dados e ver todos os detalhes.
+                Digite um número de processo acima e clique em "Consultar" para buscar no Jus.br ou selecione um da
+                lista.
               </p>
             </div>
           </div>
         )}
       </div>
     </div>
-  );
+  )
 }

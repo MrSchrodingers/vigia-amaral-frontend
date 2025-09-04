@@ -1,190 +1,133 @@
-"use client"
+"use client";
 
-import { Bell, Search, User, LogOut, Shield, RefreshCw, Mail, Filter } from "lucide-react"
-import { useState, useEffect } from "react"
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
-import { Badge } from "../ui/badge"
-import { ThemeToggle } from "../themeToggle"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdownMenu"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import { Bell, Search, User, LogOut, Shield, RefreshCw, Mail, Filter } from "lucide-react";
+import { useMemo } from "react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { ThemeToggle } from "../themeToggle";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdownMenu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { useAuth } from "../../providers/AuthProvider";
+import { useSystem } from "../../lib/hooks/useSystem";
 
 interface HeaderProps {
-  currentView: "messages" | "processes" | "chat"
+  currentView: "messages" | "processes" | "chat";
 }
 
 const viewTitles = {
   messages: "Negociações",
   processes: "Busca de Processos",
   chat: "Chat com IA",
-}
-
-const mockInboxes = [
-  { id: "all", name: "Todas as Caixas", email: "" },
-  { id: "nego1", name: "Negociadora 1", email: "nego1@empresa.com" },
-  { id: "nego2", name: "Negociadora 2", email: "nego2@empresa.com" },
-  { id: "nego3", name: "Negociadora 3", email: "nego3@empresa.com" },
-  { id: "juridico", name: "Jurídico", email: "juridico@empresa.com" },
-]
+};
 
 export function Header({ currentView }: HeaderProps) {
-  const [jusBrLoginActive, setJusBrLoginActive] = useState<boolean>(false)
-  const [isCheckingLogin, setIsCheckingLogin] = useState<boolean>(false)
-  const [lastSyncDate, setLastSyncDate] = useState<Date>(new Date(Date.now() - 2 * 60 * 60 * 1000)) // 2 hours ago
-  const [isSyncing, setIsSyncing] = useState<boolean>(false)
-  const [selectedInbox, setSelectedInbox] = useState<string>("all")
+  const { user, logout } = useAuth();
+  const { 
+    jusbrStatus, 
+    isCheckingStatus, 
+    refreshLogin, 
+    isRefreshingLogin,
+    syncEmails,
+    isSyncingEmails
+  } = useSystem();
 
-  const checkJusBrLogin = async () => {
-    setIsCheckingLogin(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const isActive = Math.random() > 0.5
-    setJusBrLoginActive(isActive)
-    setIsCheckingLogin(false)
-  }
-
-  const handleRefreshLogin = async () => {
-    setIsCheckingLogin(true)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setJusBrLoginActive(true)
-    setIsCheckingLogin(false)
-  }
-
-  const handleEmailSync = async () => {
-    setIsSyncing(true)
-    await new Promise((resolve) => setTimeout(resolve, 3000)) // Simulate sync time
-    setLastSyncDate(new Date())
-    setIsSyncing(false)
-  }
-
-  const formatLastSync = (date: Date) => {
-    const now = new Date()
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
-
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minutos atrás`
-    } else if (diffInMinutes < 1440) {
-      const hours = Math.floor(diffInMinutes / 60)
-      return `${hours} hora${hours > 1 ? "s" : ""} atrás`
-    } else {
-      return date.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    }
-  }
-
-  useEffect(() => {
-    checkJusBrLogin()
-  }, [])
+  const isJusbrLoading = isCheckingStatus || isRefreshingLogin;
+  
+  // Memoize o nome de usuário para evitar recalcular
+  const userInitials = useMemo(() => {
+    return user?.email?.substring(0, 2).toUpperCase() || '..';
+  }, [user]);
 
   return (
     <TooltipProvider>
-      <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
+      <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-semibold text-foreground">{viewTitles[currentView]}</h2>
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Search */}
           <div className="relative w-80">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input placeholder="Buscar processos, negociações..." className="pl-10" />
           </div>
 
-          {/* Jus.br login status button */}
-          <Button
-            variant={jusBrLoginActive ? "outline" : "destructive"}
-            size="sm"
-            onClick={jusBrLoginActive ? checkJusBrLogin : handleRefreshLogin}
-            disabled={isCheckingLogin}
-            className="flex items-center gap-2"
-          >
-            {isCheckingLogin ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-            {isCheckingLogin ? "Verificando..." : jusBrLoginActive ? "Jus.br Ativo" : "Refazer Login"}
-          </Button>
+          {/* Botão de Status do Jus.br Conectado à API */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={jusbrStatus?.is_active ? "outline" : "destructive"}
+                size="sm"
+                onClick={() => !jusbrStatus?.is_active && refreshLogin()}
+                disabled={isJusbrLoading}
+                className="flex items-center gap-2 w-36"
+              >
+                {isJusbrLoading ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Shield className="w-4 h-4" />
+                )}
+                
+                {isRefreshingLogin 
+                  ? "Iniciando Login..." 
+                  : isCheckingStatus
+                  ? "Verificando..."
+                  : jusbrStatus?.is_active 
+                  ? "Jus.br Ativo" 
+                  : "Refazer Login"}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                {jusbrStatus?.is_active 
+                  ? "A conexão com o PJe está ativa." 
+                  : "A sessão com o PJe expirou. Clique para refazer o login."}
+              </p>
+            </TooltipContent>
+          </Tooltip>
 
-          {/* Email sync button with tooltip and inbox filter */}
+          {/* Botão de Sincronia de E-mail Conectado à API */}
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleEmailSync}
-                  disabled={isSyncing}
+                  onClick={() => syncEmails()}
+                  disabled={isSyncingEmails}
                   className="flex items-center gap-2 bg-transparent"
                 >
-                  {isSyncing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
-                  {isSyncing ? "Sincronizando..." : "Sync Emails"}
+                  {isSyncingEmails ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                  {isSyncingEmails ? "Sincronizando..." : "Sync Emails"}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Última sincronização: {formatLastSync(lastSyncDate)}</p>
+                <p>Clique para iniciar a sincronização de e-mails em segundo plano.</p>
               </TooltipContent>
             </Tooltip>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent">
-                  <Filter className="w-4 h-4" />
-                  {mockInboxes.find((inbox) => inbox.id === selectedInbox)?.name}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Filtrar por Caixa de Entrada</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {mockInboxes.map((inbox) => (
-                  <DropdownMenuItem
-                    key={inbox.id}
-                    onClick={() => setSelectedInbox(inbox.id)}
-                    className={selectedInbox === inbox.id ? "bg-accent" : ""}
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-medium">{inbox.name}</span>
-                      {inbox.email && <span className="text-xs text-muted-foreground">{inbox.email}</span>}
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
-
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-5 h-5" />
-            <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs">3</Badge>
-          </Button>
-
+          
           <ThemeToggle />
 
-          {/* User Menu */}
+          {/* Menu do Usuário */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src="/placeholder.svg?height=40&width=40" alt="Avatar" />
-                  <AvatarFallback>AD</AvatarFallback>
+                  <AvatarFallback>{userInitials}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Advogado Demo</p>
-                  <p className="text-xs leading-none text-muted-foreground">advogado@exemplo.com</p>
+                  <p className="text-sm font-medium leading-none">Usuário</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Perfil</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sair</span>
               </DropdownMenuItem>
@@ -193,5 +136,5 @@ export function Header({ currentView }: HeaderProps) {
         </div>
       </header>
     </TooltipProvider>
-  )
+  );
 }

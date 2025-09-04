@@ -204,7 +204,7 @@ O processo encontra-se ${process.status.toLowerCase()} com prioridade ${process.
     }
 
     // Simulate PDF generation
-    const pdfUrl = `/api/processes/${processId}/pdf`
+    const pdfUrl = `/processes/${processId}/pdf`
 
     return { success: true, url: pdfUrl }
   },
