@@ -14,6 +14,11 @@ const syncProcess = async (processNumber: string): Promise<LegalProcessDetails> 
   return data;
 };
 
+const fetchProcesseDetail = async (processNumber: string): Promise<LegalProcessDetails> => {
+  const { data } = await api.get(`/processes/${processNumber}`);
+  return data;
+};
+
 const runAIJury = async (processId: string): Promise<ActionResponse<any>> => {
   const { data } = await api.post(`/actions/processes/${processId}/run-ai-jury`);
   return data;
@@ -35,6 +40,14 @@ export function useProcesses() {
       queryClient.setQueryData(['process', data.id], data);
     },
   });
+
+  const syncProcessDetailMutation = useMutation<LegalProcessDetails, Error, string>({
+    mutationFn: fetchProcesseDetail,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['processes-detail'] });
+      queryClient.setQueryData(['process-detail', data.id], data);
+    },
+  });
   
   const runAIJuryMutation = useMutation<ActionResponse<any>, Error, string>({
     mutationFn: runAIJury,
@@ -52,5 +65,6 @@ export function useProcesses() {
     isSyncing: syncProcessMutation.isPending,
     runAIJury: runAIJuryMutation.mutate,
     isAnalyzing: runAIJuryMutation.isPending,
+    syncDetail: syncProcessDetailMutation.mutate
   };
 }

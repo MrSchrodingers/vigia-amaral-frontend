@@ -47,9 +47,9 @@ const NegotiationDetailsSkeleton = () => (
       </div>
     </div>
     <div className="grid grid-cols-3 gap-4 mb-4">
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-20 w-full" />
+      <Skeleton className="h-20 w-full" />
+      <Skeleton className="h-20 w-full" />
+      <Skeleton className="h-20 w-full" />
     </div>
     <Skeleton className="h-full w-full" />
   </div>
@@ -64,11 +64,11 @@ export function MessagesView() {
   const [statusFilter, setStatusFilter] = useState<string>("all")
 
   // --- BUSCA DE DADOS (HOOK CENTRALIZADO) ---
-  const { 
-    negotiations, 
-    isLoadingList, 
-    negotiationDetails, 
-    isLoadingDetails 
+  const {
+    negotiations,
+    isLoadingList,
+    negotiationDetails,
+    isLoadingDetails
   } = useNegotiations(selectedNegotiationId)
 
   // --- EFEITOS ---
@@ -92,7 +92,7 @@ export function MessagesView() {
       return matchesSearch && matchesStatus
     })
   }, [negotiations, searchTerm, statusFilter])
-  
+
   // --- FUNÇÕES AUXILIARES ---
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -113,10 +113,10 @@ export function MessagesView() {
   }
 
   const getClientEmail = (details: NegotiationDetails) => {
-      if (!details.email_thread?.participants) return "N/A";
-      return details.email_thread.participants.find(p => 
-          p && !p.includes("amaralvasconcellos.com.br") && !p.includes("pavcob.com.br")
-      ) || "N/A";
+    if (!details.email_thread?.participants) return "N/A";
+    return details.email_thread.participants.find(p =>
+      p && !p.includes("amaralvasconcellos.com.br") && !p.includes("pavcob.com.br")
+    ) || "N/A";
   }
 
   // --- LÓGICA DE RENDERIZAÇÃO ---
@@ -218,88 +218,94 @@ export function MessagesView() {
                 <div className="flex items-center gap-4">
                   <Avatar className="w-12 h-12">
                     <AvatarFallback>
-                       {negotiationDetails.client_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "C"}
+                      {negotiationDetails.client_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "C"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <h2 className="text-xl font-semibold">{negotiationDetails.client_name}</h2>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                            <Mail className="w-4 h-4" />
-                            {getClientEmail(negotiationDetails)}
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                      <span className="flex items-center gap-1">
+                        <Mail className="w-4 h-4" />
+                        {getClientEmail(negotiationDetails)}
+                      </span>
+                      {negotiationDetails.email_thread?.subject && (
+                        <span className="truncate max-w-[40ch]">Assunto: {negotiationDetails.email_thread.subject}</span>
+                      )}
+                      {negotiationDetails.email_thread?.participants?.length ? (
+                        <span className="truncate max-w-[50ch]">
+                          Participantes: {negotiationDetails.email_thread.participants.join(", ")}
                         </span>
+                      ) : null}
+                      {negotiationDetails.message_count > 0 && (
+                        <span>
+                          Período: {formatDate(negotiationDetails.messages[0].timestamp)} – {formatDate(negotiationDetails.messages[negotiationDetails.messages.length - 1].timestamp)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                   <Badge className={cn("text-sm", getStatusColor(negotiationDetails.status))}>
-                      {negotiationDetails.status}
-                   </Badge>
+                  <Badge className={cn("text-sm", getStatusColor(negotiationDetails.status))}>
+                    {negotiationDetails.status}
+                  </Badge>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4 mb-4">
-                 <Card>
-                    <CardContent className="p-3">
-                        <p className="text-xs text-muted-foreground">Processo</p>
-                        <p className="font-mono text-sm">{negotiationDetails.process_number}</p>
-                    </CardContent>
-                 </Card>
-                 <Card>
-                    <CardContent className="p-3">
-                        <p className="text-xs text-muted-foreground">Valor da Dívida</p>
-                        <p className="font-semibold text-lg text-primary">{formatCurrency(negotiationDetails.debt_value || 0)}</p>
-                    </CardContent>
-                 </Card>
-                 <Card>
-                    <CardContent className="p-3">
-                        <p className="text-xs text-muted-foreground">Mensagens</p>
-                        <p className="font-semibold text-lg">{negotiationDetails.message_count}</p>
-                    </CardContent>
-                 </Card>
+                <Card>
+                  <CardContent className="p-3">
+                    <p className="text-xs text-muted-foreground">Processo</p>
+                    <p className="font-mono text-sm">{negotiationDetails.process_number}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-3">
+                    <p className="text-xs text-muted-foreground">Valor da Dívida</p>
+                    <p className="font-semibold text-lg text-primary">{formatCurrency(negotiationDetails.debt_value || 0)}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-3">
+                    <p className="text-xs text-muted-foreground">Mensagens</p>
+                    <p className="font-semibold text-lg">{negotiationDetails.message_count}</p>
+                  </CardContent>
+                </Card>
               </div>
             </div>
             <ScrollArea className="flex-1 p-6 bg-muted/20">
               <div className="space-y-4">
-                {negotiationDetails.messages.map((message: NegotiationMessage) => (
-                  <div
-                    key={message.id}
-                    className={cn(
-                      "flex gap-3",
-                      message.sender.includes("amaralvasconcellos.com.br") || message.sender.includes("pavcob.com.br") 
-                        ? "justify-end" 
-                        : "justify-start"
-                    )}
-                  >
-                    {!(message.sender.includes("amaralvasconcellos.com.br") || message.sender.includes("pavcob.com.br")) && (
-                      <Avatar className="w-8 h-8">
-                        <AvatarFallback className="text-xs">
-                          {negotiationDetails.client_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "C"}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+                {negotiationDetails.messages.map((message: NegotiationMessage) => {
+                  const isAgent = message.role === "agent"
+                  return (
                     <div
-                      className={cn(
-                        "max-w-[70%] rounded-lg p-3 text-sm",
-                        message.sender.includes("amaralvasconcellos.com.br") || message.sender.includes("pavcob.com.br")
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-background shadow-sm"
-                      )}
+                      key={message.id}
+                      className={cn("flex gap-3", isAgent ? "justify-end" : "justify-start")}
                     >
-                      <p className="whitespace-pre-wrap">{message.content}</p>
-                      <p className={cn("text-xs mt-2 text-right", 
-                        message.sender.includes("amaralvasconcellos.com.br") || message.sender.includes("pavcob.com.br") 
-                          ? "text-primary-foreground/70" 
-                          : "text-muted-foreground")}>
-                        {formatDate(message.timestamp)}
-                      </p>
+                      {!isAgent && (
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback className="text-xs">
+                            {negotiationDetails.client_name?.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() || "C"}
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+
+                      <div className={cn(
+                        "max-w-[70%] rounded-lg p-3 text-sm",
+                        isAgent ? "bg-primary text-primary-foreground" : "bg-background shadow-sm"
+                      )}>
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                        <p className={cn("text-xs mt-2 text-right", isAgent ? "text-primary-foreground/70" : "text-muted-foreground")}>
+                          {formatDate(message.timestamp)}
+                        </p>
+                      </div>
+
+                      {isAgent && (
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback className="text-xs bg-primary text-primary-foreground">AV</AvatarFallback>
+                        </Avatar>
+                      )}
                     </div>
-                     {(message.sender.includes("amaralvasconcellos.com.br") || message.sender.includes("pavcob.com.br")) && (
-                      <Avatar className="w-8 h-8">
-                        <AvatarFallback className="text-xs bg-primary text-primary-foreground">AV</AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </ScrollArea>
             <div className="p-4 border-t border-border bg-card">
