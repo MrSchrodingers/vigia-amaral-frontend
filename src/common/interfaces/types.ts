@@ -105,11 +105,14 @@ export interface ProcessDistribution {
 export interface LegalProcess {
   id: string
   process_number: string
+  numero_unico_incidencia?: string | null
+  grupo_incidencia?: string | null
   classe_processual: string | null
   assunto: string | null
   orgao_julgador: string | null
   status: string | null
   valor_causa: number | null
+  parties: ProcessParty[] | null
 
   // Metadados de tribunal / instância (novos)
   tribunal?: string | null
@@ -233,6 +236,7 @@ export type AIAnalysisContent = {
   process_number?: string
   inputs?: AIInputs
   legal_context?: {
+    causa_de_pedir?: string
     tese_autora?: string
     tese_reu?: string
     pontos_controversos?: string[]

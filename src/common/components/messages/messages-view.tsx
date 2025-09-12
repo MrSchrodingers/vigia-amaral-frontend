@@ -123,7 +123,7 @@ export function MessagesView() {
   return (
     <div className="flex h-full bg-background">
       {/* Coluna da Lista de Negociações */}
-      <div className="w-1/3 border-r border-border bg-card flex flex-col">
+      <div className="w-1/5 border-r border-border bg-card flex flex-col">
         <div className="p-4 border-b border-border">
           <div className="flex items-center gap-2 mb-4">
             <MessageSquare className="w-5 h-5 text-primary" />
@@ -213,7 +213,7 @@ export function MessagesView() {
         {isLoadingDetails && <NegotiationDetailsSkeleton />}
         {!isLoadingDetails && negotiationDetails && (
           <>
-            <div className="p-6 border-b border-border bg-card">
+            <div className="vp-6 border-b border-border bg-card">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <Avatar className="w-12 h-12">

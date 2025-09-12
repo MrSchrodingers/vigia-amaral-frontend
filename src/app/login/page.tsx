@@ -40,7 +40,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <Scale className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h1 className="font-bold text-2xl text-sidebar-foreground">LegalAI</h1>
+            <h1 className="font-bold text-2xl text-sidebar-foreground">VigIA</h1>
           </div>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>Entre com suas credenciais para acessar o painel.</CardDescription>

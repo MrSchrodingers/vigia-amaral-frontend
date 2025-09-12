@@ -5,34 +5,40 @@ import { MessagesView } from "../common/components/messages/messages-view"
 import { ChatView } from "../common/components/chat/chat-view"
 import { Sidebar } from "../common/components/shared/sidebar"
 import { Header } from "../common/components/shared/header"
-import { LegalProcessManager } from "../common/components/process/legal-process-manager"
+import { LegalProcessManager } from "../common/components/process"
+import { TransitCasesManager } from "../common/components/transit"
 
 
-type ViewType = "messages" | "processes" | "chat"
+type ViewType = "messages" | "processes" | "transit"
 
 export default function HomePage() {
   const [currentView, setCurrentView] = useState<ViewType>("messages")
 
   const renderView = () => {
     switch (currentView) {
-      case "messages":
-        return <MessagesView />
+//      case "messages":
+//        return <MessagesView />
       case "processes":
         return <LegalProcessManager />
-      case "chat":
-        return <ChatView />
+      case "transit":
+        return <TransitCasesManager />
       default:
-        return <MessagesView />
+        return <LegalProcessManager />
     }
   }
 
-  return (
-    <div className="flex h-screen bg-background">
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header currentView={currentView} />
-        <main className="flex-1 overflow-auto">{renderView()}</main>
-      </div>
+return (
+  <div className="flex h-screen overflow-hidden bg-background">
+    <Sidebar currentView={currentView} onViewChange={setCurrentView} />
+
+    <div className="flex-1 flex flex-col min-h-0">
+      <Header currentView={currentView}/>
+      
+      <main className="flex-1 min-h-0 overflow-y-auto">
+        {renderView()}
+      </main>
+
     </div>
-  )
+  </div>
+)
 }

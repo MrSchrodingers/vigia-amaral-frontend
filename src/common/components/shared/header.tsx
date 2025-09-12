@@ -13,13 +13,13 @@ import { useAuth } from "../../providers/AuthProvider";
 import { useSystem } from "../../lib/hooks/useSystem";
 
 interface HeaderProps {
-  currentView: "messages" | "processes" | "chat";
+  currentView: "messages" | "processes" | "transit";
 }
 
 const viewTitles = {
   messages: "Negociações",
   processes: "Busca de Processos",
-  chat: "Chat com IA",
+  transit: "Transitos em Julgado",
 };
 
 export function Header({ currentView }: HeaderProps) {

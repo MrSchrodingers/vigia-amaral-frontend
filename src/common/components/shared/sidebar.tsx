@@ -7,18 +7,18 @@ import { Separator } from "../ui/separator"
 import { ScrollArea } from "../ui/scroll-area"
 
 interface SidebarProps {
-  currentView: "messages" | "processes" | "chat"
-  onViewChange: (view: "messages" | "processes" | "chat") => void
+  currentView: "messages" | "processes" | "transit"
+  onViewChange: (view: "messages" | "processes" | "transit") => void
 }
 
 export function Sidebar({ currentView, onViewChange }: SidebarProps) {
   const menuItems = [
-    {
-      id: "messages" as const,
-      label: "Negociações",
-      icon: MessageSquare,
-      description: "Mensagens e negociações",
-    },
+//    {
+//      id: "messages" as const,
+//      label: "Negociações",
+//      icon: MessageSquare,
+//      description: "Mensagens e negociações",
+//    },
     {
       id: "processes" as const,
       label: "Processos",
@@ -26,10 +26,9 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       description: "Busca e análise",
     },
     {
-      id: "chat" as const,
-      label: "Chat IA",
+      id: "transit" as const,
+      label: "Transitos em julgado",
       icon: Bot,
-      description: "Assistente inteligente",
     },
   ]
 
@@ -38,12 +37,12 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Scale className="w-5 h-5 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+            <Scale className="w-8 h-8 text-primary" />
           </div>
           <div>
-            <h1 className="font-bold text-lg text-sidebar-foreground">LegalAI</h1>
-            <p className="text-xs text-muted-foreground">Negociação Judicial</p>
+            <h1 className="font-bold text-lg text-sidebar-foreground">VigIA</h1>
+            <p className="text-xs text-muted-foreground">Centralização de processos Jus.br e Agentes de IA</p>
           </div>
         </div>
       </div>

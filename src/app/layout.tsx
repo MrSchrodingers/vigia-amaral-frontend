@@ -10,8 +10,8 @@ import { QueryClientProvider } from "../common/providers/QueryClientProvider"
 import { AuthProvider } from "../common/providers/AuthProvider"
 
 export const metadata: Metadata = {
-  title: "LegalAI - Negociação Judicial",
-  description: "Plataforma de IA para negociação judicial e análise de processos.",
+  title: "VigIA - Centralização de processos Jus.br e Agentes de IA",
+  description: "Plataforma de Agentes IA análise de processos judiciais presentes no Jus.br e centralização de dados.",
 };
 
 export default function RootLayout({
