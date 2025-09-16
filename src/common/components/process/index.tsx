@@ -101,7 +101,7 @@ export function LegalProcessManager() {
 
     setIsAnalyzingTransit(true)
     try {
-      const response = await api.post(`/actions/processes/${selectedProcessDetails.id}/run-transit-analysis`)
+      const response = await api.post(`/actions/processes/${selectedProcessDetails.id}/run`)
       
       // Se você usar um sistema de toast (notificações), pode usá-lo aqui.
       // Ex: toast.success("Análise de trânsito concluída com sucesso!");

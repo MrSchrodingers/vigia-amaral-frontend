@@ -9,7 +9,7 @@
     "static/chunks/8484d_tailwind-merge_dist_bundle-mjs_mjs_4d8e7d9e._.js",
     "static/chunks/4cb14_@radix-ui_react-icons_dist_react-icons_esm_59cf0437.js",
     "static/chunks/4d072_@radix-ui_react-select_dist_index_mjs_37b911af._.js",
-    "static/chunks/node_modules__pnpm_bb9c4a09._.js"
+    "static/chunks/node_modules__pnpm_57984b73._.js"
   ],
   "source": "dynamic"
 });

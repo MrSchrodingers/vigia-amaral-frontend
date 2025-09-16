@@ -19,7 +19,7 @@ interface HeaderProps {
 const viewTitles = {
   messages: "Negociações",
   processes: "Busca de Processos",
-  transit: "Transitos em Julgado",
+  transit: "Trânsitos em Julgado",
 };
 
 export function Header({ currentView }: HeaderProps) {

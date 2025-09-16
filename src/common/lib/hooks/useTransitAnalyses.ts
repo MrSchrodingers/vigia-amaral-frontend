@@ -25,13 +25,13 @@ const fetchTransitAnalyses = async (filters: TransitAnalysesFilters): Promise<Tr
   params.append("skip", String(filters.skip || 0));
   params.append("limit", String(filters.limit || 100));
 
-  const { data } = await api.get(`/transit-analyses?${params.toString()}`);
+  const { data } = await api.get(`/proccess-analyses?${params.toString()}`);
   return data;
 };
 
 export const useTransitAnalyses = (filters: TransitAnalysesFilters) => {
   return useQuery<TransitAnalysis[]>({
-    queryKey: ["transit-analyses", filters],
+    queryKey: ["proccess-analyses", filters],
     queryFn: () => fetchTransitAnalyses(filters),
   });
 };

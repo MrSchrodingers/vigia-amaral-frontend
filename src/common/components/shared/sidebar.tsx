@@ -1,6 +1,6 @@
 "use client"
 
-import { MessageSquare, Search, Bot, Scale, Settings, HelpCircle } from "lucide-react"
+import { MessageSquare, Search, Bot, Scale, Settings, HelpCircle, Gavel } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "../../utils/utils"
 import { Separator } from "../ui/separator"
@@ -28,7 +28,7 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
     {
       id: "transit" as const,
       label: "Transitos em julgado",
-      icon: Bot,
+      icon: Gavel,
     },
   ]
 
